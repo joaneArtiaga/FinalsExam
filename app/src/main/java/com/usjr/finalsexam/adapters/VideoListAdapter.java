@@ -1,6 +1,8 @@
 package com.usjr.finalsexam.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class VideoListAdapter extends BaseAdapter {
-
     private Context     mContext;
     private List<Video> mVideos;
 
@@ -47,14 +48,22 @@ public class VideoListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_video, parent, false);
             holder = new ViewHolder(convertView);
+            convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
+
         }
 
         Video video = mVideos.get(position);
         if (video != null) {
             if (holder.imgThumbnail != null) {
-                Glide.with(mContext).load(video.getThumbnailUrl()).into(holder.imgThumbnail);
+                Glide.with(mContext).load(video.getThumbnailUrl()).override(600,200).into(holder.imgThumbnail);
+
+
+            }
+            if(holder.tvTitle != null){
+
+                holder.tvTitle.setText(video.getTitle());
             }
         }
 
@@ -85,6 +94,8 @@ public class VideoListAdapter extends BaseAdapter {
 
         ViewHolder(View itemView) {
             tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
+            tvTitle.setTextColor(Color.WHITE);
+            imgThumbnail = (ImageView) itemView.findViewById(R.id.imgThumbnail);
         }
     }
 }

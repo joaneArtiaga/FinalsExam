@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.usjr.finalsexam.entity.Video;
 
@@ -51,8 +53,12 @@ public class VideoTable {
     }
 
     private static Video createVideoFromCursor(Cursor cursor) {
-        // TODO: Implement this method
-        return null;
+        Video vid = new Video();
+        vid.setId(cursor.getString(0));
+        vid.setTitle(cursor.getString(1));
+        vid.setDescription(cursor.getString(2));
+        vid.setThumbnailUrl(cursor.getString(3));
+        return vid;
     }
 
     public static long insertVideo(Context context, Video video) {
@@ -123,7 +129,18 @@ public class VideoTable {
         Cursor cursor = null;
 
         try {
-            // TODO: Implement retrieval of all video items from the database
+            db = DbHandler.getInstance(context).getReadableDatabase();
+            cursor=db.rawQuery(SELECT_QUERY, null);
+            if(cursor.moveToFirst()){
+                do{
+                    String id = cursor.getString(cursor.getColumnIndex(VideoEntry._ID));
+                    String title = cursor.getString(cursor.getColumnIndex(VideoEntry.COL_TITLE));
+                    String desc = cursor.getString(cursor.getColumnIndex(VideoEntry.COL_DESCRIPTION));
+                    String thumbnail = cursor.getString(cursor.getColumnIndex(VideoEntry.COL_THUMBNAIL_URL));
+                    Video video = new Video(id, title,desc,thumbnail);
+                    videos.add(video);
+                }while(cursor.moveToNext());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -134,7 +151,7 @@ public class VideoTable {
                 cursor.close();
             }
         }
-
+        Log.d(videos.toString(), "Videos");
         return videos;
     }
 }
